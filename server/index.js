@@ -1,42 +1,40 @@
+'use strict'
+
 const express = require('express');
 const mongoose = require('mongoose');
-const app = express();
-const productRoutes = require('./routes/products');
-
-const config = require('./config/index');
+const config = require('./config');
 const SampleDb = require('./sample-db');
-const { EOVERFLOW } = require('constants');
 
-
+const productRoutes = require('./routes/products');
+const path = require('path');
 
 mongoose.connect(config.DB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
-}).then(() => {
-  if(process.env.NODE_ENV !== 'production') {
-    console.log('MongoDB connection successful');
-    const sampleDb = new SampleDb();
-    // sampleDb.initDb();
+}).then(
+  () => {
+    if(process.env.NODE_ENV !== 'production') {
+      const sampleDb = new SampleDb();
+      // sampleDb.initDb()
+    }
   }
-}).catch((error) => {
-  console.log(error);
-});
+);
 
+const app = express();
 
-const PORT = process.env.PORT || 3001;
-const path = require('path');
-
+app.use('/api/v1/products', productRoutes);
 
 if(process.env.NODE_ENV === 'production') {
-  const appPath = path.join(__dirname, '..', 'dist', 'resavation-app');
+  const appPath = path.join( __dirname, '..', 'dist', 'reservation-app')
   app.use(express.static(appPath));
-  app.get('*', (req, res) => {
+  app.get("*", function(req, res) {
     res.sendFile(path.resolve(appPath, 'index.html'));
-  });
+  })
 }
 
 
-app.use('/api/v1/products', productRoutes);
-app.listen(PORT, () => {
-  console.log('server listening on ' + PORT);
+const PORT = process.env.PORT || '3001'
+
+app.listen(PORT, function() {
+  console.log('I am running!');
 });
