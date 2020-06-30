@@ -31,7 +31,7 @@ if(process.env.NODE_ENV === 'production') {
   const appPath = path.join(__dirname, '..', 'dist', 'resavation-app');
   app.use(express.static(appPath));
   app.get('*', (req, res) => {
-    res.send(path.resolve(appPath, 'index.html'));
+    res.sendFile(path.resolve(appPath, 'index.html'));
   });
 }
 
