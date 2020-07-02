@@ -3,7 +3,11 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../model/product');
+const UserCtrl = require('../controllers/user');
 
+// router.get('/secret', UserCtrl.authMiddleware, (req, res) => {
+//     return res.json({'secret' : true });
+// });
 
 router.get('', (req, res) => {
   Product.find({}, (error, products) => {
@@ -11,7 +15,7 @@ router.get('', (req, res) => {
   })
 });
 
-router.get('/:productId', (req, res) => {
+router.get('/:productId', UserCtrl.authMiddleware, (req, res) => {
   const productId = req.params.productId;
   Product.findById(productId, (error, product) => {
     if(error) {
